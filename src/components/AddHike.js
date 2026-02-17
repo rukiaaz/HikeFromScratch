@@ -125,5 +125,7 @@ const AddHike = ({ setCurrentScreen, saveCompletedHike, activeHike }) => {
     </div>
   );
 };
+// asdasd
+
 
 export default AddHike;
