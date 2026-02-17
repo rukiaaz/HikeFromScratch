@@ -1,19 +1,16 @@
 import React from 'react';
 import { format } from 'date-fns';
 
-const HikeHistory = ({ hikes, setCurrentScreen }) => {
-  // Safe date formatting function
+const HikeHistory = ({ hikes, setCurrentScreen, onSelectHike }) => {
   const formatSafeDate = (dateString) => {
     if (!dateString) return 'Unknown date';
     try {
       const date = new Date(dateString);
-      // Check if date is valid
       if (isNaN(date.getTime())) {
         return 'Invalid date';
       }
       return format(date, 'MMM d, yyyy');
     } catch (error) {
-      console.error('Date formatting error:', error);
       return 'Unknown date';
     }
   };
@@ -38,7 +35,6 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
 
   return (
     <div className="content" style={{ paddingBottom: '80px' }}>
-      {/* Status Bar */}
       <div className="status-bar">
         <span className="time">9:41</span>
         <div className="battery">
@@ -48,7 +44,6 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
         </div>
       </div>
 
-      {/* Header with Back Button */}
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
@@ -71,7 +66,6 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
         <h2 style={{ margin: 0, fontSize: '24px' }}>Hike History</h2>
       </div>
 
-      {/* Total Stats */}
       <div style={{ 
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         borderRadius: '15px',
@@ -91,7 +85,6 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
         </div>
       </div>
 
-      {/* Hike List */}
       {hikes.length === 0 ? (
         <div style={{ textAlign: 'center', marginTop: '50px', padding: '0 20px' }}>
           <span style={{ fontSize: '64px', display: 'block', marginBottom: '20px' }}>🥾</span>
@@ -117,22 +110,16 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
         </div>
       ) : (
         <div style={{ padding: '0 20px' }}>
-          {hikes.map((hike, index) => (
+          {hikes.map((hike) => (
             <div 
-              key={hike.id || index} 
+              key={hike.id} 
               className={`hike-item ${hike.imageUrl ? 'with-image' : ''}`}
-              onClick={() => {
-                // Pass the selected hike to detail view
-                setCurrentScreen('detail');
-              }}
+              onClick={() => onSelectHike && onSelectHike(hike)}
               style={{
                 cursor: 'pointer',
-                marginBottom: '20px',
-                transition: 'transform 0.2s',
-                border: '1px solid #f0f0f0'
+                marginBottom: '20px'
               }}
             >
-              {/* Image Section */}
               {hike.imageUrl && (
                 <div style={{ position: 'relative' }}>
                   <img 
@@ -147,7 +134,6 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
                       borderTopRightRadius: '15px'
                     }}
                   />
-                  {/* Difficulty Badge on Image */}
                   <span 
                     style={{
                       position: 'absolute',
@@ -170,9 +156,7 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
                 </div>
               )}
 
-              {/* Content Section */}
               <div className="hike-info" style={{ padding: '15px' }}>
-                {/* Header with Title and Difficulty (if no image) */}
                 {!hike.imageUrl && (
                   <div className="hike-header" style={{ 
                     display: 'flex', 
@@ -203,14 +187,12 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
                   </div>
                 )}
 
-                {/* Title (if image exists) */}
                 {hike.imageUrl && (
                   <h3 style={{ fontSize: '18px', margin: '0 0 10px 0', color: '#333' }}>
                     {hike.title || 'Untitled Hike'}
                   </h3>
                 )}
 
-                {/* Description */}
                 <p className="hike-description" style={{ 
                   color: '#666', 
                   margin: '0 0 15px 0',
@@ -220,7 +202,6 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
                   {hike.description || 'No description provided'}
                 </p>
 
-                {/* Stats Row */}
                 <div style={{ 
                   display: 'flex', 
                   justifyContent: 'space-between', 
@@ -248,7 +229,6 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
                   )}
                 </div>
 
-                {/* Date and Time Row */}
                 <div style={{ 
                   display: 'flex', 
                   justifyContent: 'space-between',
@@ -261,17 +241,6 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
                       {formatSafeDate(hike.startTime)}
                     </span>
                   </div>
-                  {hike.startTime && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <span style={{ color: '#999' }}>⏰</span>
-                      <span style={{ color: '#999', fontSize: '13px' }}>
-                        {new Date(hike.startTime).toLocaleTimeString([], { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })}
-                      </span>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
@@ -279,7 +248,6 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
         </div>
       )}
 
-      {/* Bottom Navigation */}
       <div className="bottom-nav" style={{
         position: 'fixed',
         bottom: 0,
@@ -291,64 +259,23 @@ const HikeHistory = ({ hikes, setCurrentScreen }) => {
         display: 'flex',
         justifyContent: 'space-around',
         padding: '12px 0',
-        borderTop: '1px solid #f0f0f0',
-        boxShadow: '0 -2px 10px rgba(0,0,0,0.05)'
+        borderTop: '1px solid #f0f0f0'
       }}>
-        <div 
-          className="nav-item" 
-          onClick={() => setCurrentScreen('home')}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            color: '#999',
-            cursor: 'pointer'
-          }}
-        >
-          <span style={{ fontSize: '24px' }}>🏠</span>
-          <span style={{ fontSize: '12px', marginTop: '4px' }}>Home</span>
+        <div className="nav-item" onClick={() => setCurrentScreen('home')}>
+          <span>🏠</span>
+          <span>Home</span>
         </div>
-        <div 
-          className="nav-item active" 
-          onClick={() => setCurrentScreen('history')}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            color: '#667eea',
-            cursor: 'pointer'
-          }}
-        >
-          <span style={{ fontSize: '24px' }}>📋</span>
-          <span style={{ fontSize: '12px', marginTop: '4px' }}>History</span>
+        <div className="nav-item active" onClick={() => setCurrentScreen('history')}>
+          <span>📋</span>
+          <span>History</span>
         </div>
-        <div 
-          className="nav-item" 
-          onClick={() => setCurrentScreen('active')}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            color: '#999',
-            cursor: 'pointer'
-          }}
-        >
-          <span style={{ fontSize: '24px' }}>➕</span>
-          <span style={{ fontSize: '12px', marginTop: '4px' }}>New</span>
+        <div className="nav-item" onClick={() => setCurrentScreen('active')}>
+          <span>➕</span>
+          <span>New</span>
         </div>
-        <div 
-          className="nav-item" 
-          onClick={() => {}}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            color: '#999',
-            cursor: 'pointer'
-          }}
-        >
-          <span style={{ fontSize: '24px' }}>👤</span>
-          <span style={{ fontSize: '12px', marginTop: '4px' }}>Profile</span>
+        <div className="nav-item" onClick={() => {}}>
+          <span>👤</span>
+          <span>Profile</span>
         </div>
       </div>
     </div>

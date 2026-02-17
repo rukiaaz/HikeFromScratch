@@ -2,7 +2,6 @@ import React from 'react';
 import { format } from 'date-fns';
 
 const HikeDetail = ({ hike, setCurrentScreen }) => {
-  // If no hike data, show error state
   if (!hike) {
     return (
       <div className="content" style={{ padding: '20px', textAlign: 'center' }}>
@@ -35,7 +34,6 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
     );
   }
 
-  // Safe date formatting function
   const formatSafeDate = (dateString, formatStr) => {
     if (!dateString) return 'Unknown date';
     try {
@@ -45,17 +43,7 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
       }
       return format(date, formatStr);
     } catch (error) {
-      console.error('Date formatting error:', error);
       return 'Unknown date';
-    }
-  };
-
-  const getDifficultyColor = (difficulty) => {
-    switch(difficulty?.toLowerCase()) {
-      case 'easy': return '#4caf50';
-      case 'medium': return '#ff9800';
-      case 'hard': return '#f44336';
-      default: return '#999';
     }
   };
 
@@ -70,7 +58,6 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
 
   return (
     <div className="content" style={{ paddingBottom: '30px', minHeight: '100vh', background: 'white' }}>
-      {/* Status Bar */}
       <div className="status-bar" style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 20px' }}>
         <span className="time">9:41</span>
         <div className="battery">
@@ -80,7 +67,6 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
         </div>
       </div>
 
-      {/* Header with Back Button */}
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
@@ -103,7 +89,6 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
         <h2 style={{ margin: 0, fontSize: '24px', color: '#333' }}>Hike Details</h2>
       </div>
 
-      {/* Image Section */}
       {hike.imageUrl ? (
         <div style={{ position: 'relative', marginBottom: '20px' }}>
           <img 
@@ -115,7 +100,6 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
               objectFit: 'cover'
             }} 
           />
-          {/* Difficulty Badge on Image */}
           <span 
             style={{
               position: 'absolute',
@@ -147,7 +131,6 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
           position: 'relative'
         }}>
           <span style={{ fontSize: '64px' }}>🥾</span>
-          {/* Difficulty Badge */}
           <span 
             style={{
               position: 'absolute',
@@ -161,8 +144,7 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
               fontWeight: '600',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              backdropFilter: 'blur(5px)'
+              gap: '8px'
             }}
           >
             <span>{getDifficultyEmoji(hike.difficulty)}</span>
@@ -171,9 +153,7 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
         </div>
       )}
 
-      {/* Content Section */}
       <div style={{ padding: '0 20px' }}>
-        {/* Title */}
         <h1 style={{ 
           fontSize: '32px', 
           margin: '0 0 15px 0',
@@ -183,7 +163,6 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
           {hike.title || 'Untitled Hike'}
         </h1>
 
-        {/* Description */}
         <p style={{ 
           fontSize: '16px', 
           lineHeight: '1.6', 
@@ -196,7 +175,6 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
           {hike.description || 'No description provided for this hike.'}
         </p>
 
-        {/* Stats Cards */}
         <div style={{ 
           display: 'grid',
           gridTemplateColumns: 'repeat(3, 1fr)',
@@ -244,7 +222,6 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
           </div>
         </div>
 
-        {/* Date and Time Details */}
         <div style={{ 
           background: '#f8f9fa',
           borderRadius: '15px',
@@ -288,7 +265,6 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div style={{ display: 'flex', gap: '15px', marginBottom: '30px' }}>
           <button 
             style={{
@@ -337,7 +313,6 @@ const HikeDetail = ({ hike, setCurrentScreen }) => {
                   alert('Share cancelled');
                 });
               } else {
-                // Fallback for browsers that don't support share
                 navigator.clipboard.writeText(
                   `${hike.title || 'My Hike'}\n` +
                   `Distance: ${hike.distance || 0}km\n` +
