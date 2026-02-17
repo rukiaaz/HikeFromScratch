@@ -49,7 +49,6 @@ const ActiveHike = ({ activeHike, setActiveHike, saveCompletedHike, setCurrentSc
           setPath(prevPath => {
             const newPath = [...prevPath, newPos];
             
-            // Calculate distance if we have at least 2 points
             if (prevPath.length > 0) {
               const lastPos = prevPath[prevPath.length - 1];
               const segmentDistance = calculateDistance(
@@ -128,7 +127,7 @@ const ActiveHike = ({ activeHike, setActiveHike, saveCompletedHike, setCurrentSc
       if (position) {
         map.setView([position.lat, position.lng], 16);
       }
-    }, [position, map]);
+    }, [position]);
     return null;
   };
 

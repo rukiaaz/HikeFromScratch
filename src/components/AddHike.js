@@ -27,7 +27,16 @@ const AddHike = ({ setCurrentScreen, saveCompletedHike, activeHike }) => {
       alert('Please fill in all fields');
       return;
     }
-    saveCompletedHike(hikeData);
+
+    const completedHikeData = {
+      ...hikeData,
+      distance: activeHike?.distance || 0,
+      duration: activeHike?.duration || '00:00:00',
+      startTime: activeHike?.startTime || new Date().toISOString(),
+      endTime: new Date().toISOString()
+    };
+
+    saveCompletedHike(completedHikeData);
   };
 
   return (
@@ -105,7 +114,7 @@ const AddHike = ({ setCurrentScreen, saveCompletedHike, activeHike }) => {
           margin: '20px 0'
         }}>
           <h4>Hike Summary</h4>
-          <p>Distance: {activeHike?.distance || 0} km</p>
+          <p>Distance: {activeHike?.distance?.toFixed(1) || 0} km</p>
           <p>Duration: {activeHike?.duration || '00:00:00'}</p>
         </div>
 

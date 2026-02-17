@@ -1,7 +1,7 @@
 import React from 'react';
 import { format, startOfWeek, addDays } from 'date-fns';
 
-const HomeScreen = ({ setCurrentScreen, startNewHike, hikes }) => {
+const HomeScreen = ({ setCurrentScreen, startNewHike, hikes, onSelectHike }) => {
   const today = new Date();
   const startOfCurrentWeek = startOfWeek(today, { weekStartsOn: 1 });
   
@@ -15,8 +15,21 @@ const HomeScreen = ({ setCurrentScreen, startNewHike, hikes }) => {
     };
   });
 
-  const totalDistance = hikes.reduce((sum, hike) => sum + hike.distance, 0);
+  const totalDistance = hikes.reduce((sum, hike) => sum + (hike.distance || 0), 0);
   const recentHikes = hikes.slice(0, 3);
+
+  const formatSafeDate = (dateString) => {
+    if (!dateString) return 'Unknown date';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Invalid date';
+      }
+      return format(date, 'MMM d, yyyy');
+    } catch (error) {
+      return 'Unknown date';
+    }
+  };
 
   return (
     <div className="content">
@@ -77,50 +90,30 @@ const HomeScreen = ({ setCurrentScreen, startNewHike, hikes }) => {
       </div>
 
       <h3>Recent Hikes</h3>
-{recentHikes.length > 0 ? (
-  recentHikes.map(hike => {
-    // Safe date formatting function
-    const formatSafeDate = (dateString) => {
-      if (!dateString) return 'Unknown date';
-      try {
-        const date = new Date(dateString);
-        // Check if date is valid
-        if (isNaN(date.getTime())) {
-          return 'Invalid date';
-        }
-        return format(date, 'MMM d, yyyy');
-      } catch (error) {
-        console.error('Date formatting error:', error);
-        return 'Unknown date';
-      }
-    };
-
-    return (
-      <div 
-        key={hike.id} 
-        className="hike-item"
-        onClick={() => {
-          setCurrentScreen('detail');
-        }}
-      >
-        <div className="hike-header">
-          <span className="hike-distance">{hike.distance || 0} km</span>
-          <span className={`difficulty-badge difficulty-${hike.difficulty || 'easy'}`}>
-            {hike.difficulty || 'easy'}
-          </span>
-        </div>
-        <p className="hike-description">{hike.description || 'No description'}</p>
-        <span className="hike-date">
-          {formatSafeDate(hike.startTime)}
-        </span>
-      </div>
-    );
-  })
-) : (
-  <p style={{ color: '#999', textAlign: 'center', margin: '40px 0' }}>
-    No hikes yet. Start your first hike!
-  </p>
-)}
+      {recentHikes.length > 0 ? (
+        recentHikes.map((hike) => (
+          <div 
+            key={hike.id} 
+            className="hike-item"
+            onClick={() => onSelectHike && onSelectHike(hike)}
+          >
+            <div className="hike-header">
+              <span className="hike-distance">{hike.distance?.toFixed(1) || 0} km</span>
+              <span className={`difficulty-badge difficulty-${hike.difficulty || 'easy'}`}>
+                {hike.difficulty || 'easy'}
+              </span>
+            </div>
+            <p className="hike-description">{hike.description || 'No description'}</p>
+            <span className="hike-date">
+              {formatSafeDate(hike.startTime)}
+            </span>
+          </div>
+        ))
+      ) : (
+        <p style={{ color: '#999', textAlign: 'center', margin: '40px 0' }}>
+          No hikes yet. Start your first hike!
+        </p>
+      )}
 
       <div className="bottom-nav">
         <div className="nav-item active" onClick={() => setCurrentScreen('home')}>

@@ -10,49 +10,62 @@ function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
   const [hikes, setHikes] = useState([]);
   const [activeHike, setActiveHike] = useState(null);
+  const [selectedHike, setSelectedHike] = useState(null);
 
   // Load hikes from localStorage on startup
   useEffect(() => {
     const savedHikes = localStorage.getItem('hikes');
     if (savedHikes) {
-      setHikes(JSON.parse(savedHikes));
+      try {
+        setHikes(JSON.parse(savedHikes));
+      } catch (e) {
+        console.error('Error loading hikes:', e);
+      }
     }
   }, []);
 
   // Save hikes to localStorage when updated
   useEffect(() => {
-    localStorage.setItem('hikes', JSON.stringify(hikes));
+    if (hikes.length > 0) {
+      localStorage.setItem('hikes', JSON.stringify(hikes));
+    }
   }, [hikes]);
 
   const startNewHike = () => {
-  const now = new Date();
-  const newHike = {
-    id: Date.now(),
-    startTime: now.toISOString(), // This ensures valid ISO format
-    endTime: null,
-    distance: 0,
-    path: [],
-    status: 'active',
-    paused: false,
-    description: '',
-    difficulty: 'easy',
-    imageUrl: null,
-    title: ''
+    const now = new Date();
+    const newHike = {
+      id: Date.now(),
+      startTime: now.toISOString(),
+      endTime: null,
+      distance: 0,
+      path: [],
+      status: 'active',
+      paused: false,
+      description: '',
+      difficulty: 'easy',
+      imageUrl: null,
+      title: ''
+    };
+    setActiveHike(newHike);
+    setCurrentScreen('active');
   };
-  setActiveHike(newHike);
-  setCurrentScreen('active');
-};
 
   const saveCompletedHike = (hikeData) => {
     const completedHike = {
       ...activeHike,
       ...hikeData,
       endTime: new Date().toISOString(),
-      status: 'completed'
+      status: 'completed',
+      id: activeHike?.id || Date.now()
     };
-    setHikes([completedHike, ...hikes]);
+    setHikes(prevHikes => [completedHike, ...prevHikes]);
     setActiveHike(null);
     setCurrentScreen('home');
+  };
+
+  const viewHikeDetail = (hike) => {
+    setSelectedHike(hike);
+    setCurrentScreen('detail');
   };
 
   return (
@@ -62,6 +75,7 @@ function App() {
           setCurrentScreen={setCurrentScreen}
           startNewHike={startNewHike}
           hikes={hikes}
+          onSelectHike={viewHikeDetail}
         />
       )}
       
@@ -78,7 +92,7 @@ function App() {
         <HikeHistory 
           hikes={hikes}
           setCurrentScreen={setCurrentScreen}
-          setCurrentScreen={setCurrentScreen}
+          onSelectHike={viewHikeDetail}
         />
       )}
       
@@ -92,7 +106,7 @@ function App() {
       
       {currentScreen === 'detail' && (
         <HikeDetail 
-          hike={activeHike}
+          hike={selectedHike}
           setCurrentScreen={setCurrentScreen}
         />
       )}
