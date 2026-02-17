@@ -20,9 +20,8 @@ const ActiveHike = ({ activeHike, setActiveHike, saveCompletedHike, setCurrentSc
   const mapRef = useRef();
   const watchIdRef = useRef();
 
-  // Calculate distance between two points (Haversine formula)
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Earth's radius in km
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = 
@@ -33,7 +32,7 @@ const ActiveHike = ({ activeHike, setActiveHike, saveCompletedHike, setCurrentSc
     return R * c;
   };
 
-  // Start tracking position
+  // FIXED: Removed 'position' from dependencies
   useEffect(() => {
     if (!isPaused && navigator.geolocation) {
       watchIdRef.current = navigator.geolocation.watchPosition(
@@ -75,9 +74,8 @@ const ActiveHike = ({ activeHike, setActiveHike, saveCompletedHike, setCurrentSc
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
     };
-  }, [isPaused]);
+  }, [isPaused]); // FIXED: Removed 'position' from here
 
-  // Timer for duration
   useEffect(() => {
     let interval;
     if (!isPaused) {
@@ -120,14 +118,13 @@ const ActiveHike = ({ activeHike, setActiveHike, saveCompletedHike, setCurrentSc
     }
   };
 
-  // Map controller component
   const MapController = () => {
     const map = useMap();
     useEffect(() => {
       if (position) {
         map.setView([position.lat, position.lng], 16);
       }
-    }, [position]);
+    }, [position]); // This one is fine - position is used here
     return null;
   };
 
